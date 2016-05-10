@@ -1,0 +1,67 @@
+# 3
+
+# Benchmark models are
+# SARIMA(0,0,0)(0,0,0)12 -- msarima_fit1
+# SARIMA(0,0,0)(0,1,0)4 -- qsarima_fit2.1
+
+# ************** #
+# SARIMA monthly #
+# ************** #
+# Summary: 78 obs.
+
+# Tests suggest presence of unit root => use first diff
+# Plot diagnostics TS plots
+tsdisplay(effective_production/1000, main="Ёффективный экспорт нефти после вз€ти€ первых разностей, тыс. т", col="blue3")
+tsdisplay(diff(effective_production/1000), main="Ёффективный экспорт нефти после вз€ти€ первых разностей, тыс. т", col="blue3")
+
+# ACF and PACF suggest model SARIMA(0,0,0)(0,0,0)12
+msarima_fit1 <- Arima(effective_production, order=c(0,0,0), seasonal=c(0,0,0))
+msarima_fit1
+sarima(effective_production, 0, 0, 0, 0, 0, 0, 12, no.constant=TRUE) # This is our model
+# AIC=1434.17   AICc=1434.33   BIC=1438.89
+# -- residuals not normal...
+
+# Let's have a look what auto.arima will tell us:
+msarima_fit2.1 <- auto.arima(effective_production)
+msarima_fit2.1 # This one suggests SARIMA(0,0,0)(0,0,0)12
+sarima(effective_production, 0, 0, 0, 0, 0, 0, 12, no.constant=TRUE) # This is our model
+# -- same
+
+msarima_fit2.2 <- auto.arima(effective_production, stepwise=FALSE, approximation=FALSE)
+msarima_fit2.2 # SARIMA(0,0,0)(0,0,0)12
+sarima(effective_production, 0, 0, 0, 0, 0, 0, 12, no.constant=TRUE) # This is our model
+# -- same
+
+# Benchmark model is simply const SARIMA(0,0,0)(0,0,0)12
+
+
+# ************** #
+# SARIMA quarter #
+# ************** #
+# Summary: 26 obs.
+
+# Plot diagnostics TS plots
+tsdisplay(effective_production_q/1000, main="Ёффективный экспорт нефти, тыс. т", col="blue3")
+tsdisplay(diff(effective_production_q/1000), main="Ёффективный экспорт нефти после вз€ти€ первых разностей, тыс. т", col="blue3")
+
+# ACF and PACF suggest SARIMA(1,1,1)(0,0,0)4
+qsarima_fit1 <- Arima(effective_production_q, order=c(1,1,1), seasonal=c(0,0,0))
+qsarima_fit1
+sarima(effective_production_q, 1,1,1, 0, 0, 0, 4, no.constant=TRUE) # This is our model
+# AIC=502.42   AICc=503.56   BIC=506.07
+# -- Too few obs, fails tests
+
+# Let's have a look what auto.arima will tell us:
+qsarima_fit2.1 <- auto.arima(effective_production_q)
+qsarima_fit2.1 # This one suggests SARIMA(0,0,0)(0,1,0)4
+sarima(effective_production_q, 0,0,0,0,1,0, 4, no.constant=TRUE)
+# AIC=441.98   AICc=442.18   BIC=443.07
+# -- Too few obs, fails tests
+
+qsarima_fit2.2 <- auto.arima(effective_production_q, stepwise=FALSE, approximation=FALSE)
+qsarima_fit2.2 # SARIMA(0,0,0)(1,1,0)4
+sarima(effective_production_q, 0, 0, 0, 1, 1, 0, 4, no.constant=TRUE) 
+#AIC=440.85   AICc=441.48   BIC=443.03
+# -- Too few obs, fails tests
+
+# Benchmark model is SARIMA(0,0,0)(0,1,0)4
