@@ -1,3 +1,6 @@
+#IMPORTANT!!!
+#This script almost just the same as the beginning of the file ndfl.auto.arima.2.R
+
 # Settings
 #path = "C:/Users/Administrator/Dropbox/IPython/TaxesForecast/! еям/"
 path = "C:/Users/Alekz/Dropbox/IPython/TaxesForecast/! еям/"
